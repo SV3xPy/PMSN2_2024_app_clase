@@ -8,8 +8,11 @@ import 'package:app_clase/screens/popular_movies_screen.dart';
 import 'package:app_clase/screens/products_firebase_screen.dart';
 import 'package:app_clase/screens/register_screen.dart';
 import 'package:app_clase/screens/splash_screen.dart';
-import 'package:app_clase/services/products_firebase.dart';
+import 'package:app_clase/screens/favorite_movie_screen.dart';
+//import 'package:app_clase/services/products_firebase.dart';
 import 'package:app_clase/settings/theme.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +25,8 @@ void main() async {
       projectId: "pm2024-e444d", //paste your project id here
     ),
   );
+  await Hive.initFlutter();
+  await Hive.openBox('favorites');
   runApp(const MyApp());
 }
 
@@ -46,7 +51,7 @@ class MyApp extends StatelessWidget {
               "/register": (BuildContext context) => const RegisterScreen(),
               "/movies": (BuildContext context) => const PopularMoviesScreen(),
               "/detail": (BuildContext context) => const DetailMovieScreen(),
-              //"/favorites":(BuildContext context) => const FavoriteMoviesScreen(),
+              "/favorites":(BuildContext context) => const FavoriteMoviesScreen(),
               "/productsFirebase":(BuildContext context) => const ProductsFirebaseScreen(),
             },
           );
