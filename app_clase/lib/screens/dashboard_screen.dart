@@ -39,6 +39,13 @@ class DashboardScreen extends StatelessWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.pushNamed(context, '/movies'),
           ),
+           ListTile(
+            leading: const Icon(Icons.map),
+            title: const Text('Mapas'),
+            subtitle: const Text('Del mapita'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.pushNamed(context, '/map'),
+          ),
           ListTile(
             leading: const Icon(Icons.shop),
             title: const Text('ProdFirebase'),

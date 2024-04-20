@@ -16,32 +16,6 @@ class ApiFavorites {
 
   Stream<List<Map<String, dynamic>>> get favoriteMoviesStream =>
       _favoriteMoviesStreamController.stream;
-
-  // Token autorizado
-  //Nos primitira obtener los datos del usuario o sesion actual
-  /* Future<Map<String, dynamic>> getSessionData() async {
-    try {
-      final dio = Dio();
-      final response = await dio.get(
-        'https://api.themoviedb.org/3/authentication/session/new',
-        queryParameters: {
-          'api_key': apiKey,
-          'request_token': accessToken,
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final sessionId = response.data['session_id'];
-        final accountId = response.data['account_id'];
-        return {'sessionId': sessionId, 'accountId': accountId};
-      } else {
-        throw Exception('Failed to retrieve session data');
-      }
-    } catch (e) {
-      throw Exception('Error: $e');
-    }
-  }
-*/
   //Se nos pemitira el tener la lista de las peliculas favoritas de la sesion y cuenta
   Future<List<Map<String, dynamic>>> getFavoriteMovies() async {
     try {

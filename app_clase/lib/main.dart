@@ -1,3 +1,4 @@
+import 'package:app_clase/screens/maps_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:app_clase/screens/app_value_notifier.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
               "/detail": (BuildContext context) => const DetailMovieScreen(),
               "/favorites":(BuildContext context) => const FavoriteMoviesScreen(),
               "/productsFirebase":(BuildContext context) => const ProductsFirebaseScreen(),
+              "/map":(BuildContext context) => const MapSample(),
             },
           );
         });

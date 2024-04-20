@@ -16,12 +16,6 @@ class _FavoriteMoviesScreenState extends State<FavoriteMoviesScreen> {
   void initState() {
     super.initState();
     apiFavorites.getFavoriteMoviesStream();
-    /*_favoriteMoviesFuture = apiFavorites
-        .getFavoriteMovies()
-        .then((List<Map<String, dynamic>> movies) {
-      // Convierte cada mapa en un objeto PopularModel
-      return movies.map((movie) => PopularModel.fromJson(movie)).toList();
-    });*/
   }
 
   @override
