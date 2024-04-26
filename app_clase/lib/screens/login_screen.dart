@@ -1,4 +1,5 @@
 import 'package:app_clase/services/email_auth_firebase.dart';
+import 'package:app_clase/services/google_auth_firebase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app_clase/screens/dashboard_screen.dart';
@@ -16,6 +17,7 @@ class LoginScreen extends StatefulWidget {
 class _nameState extends State<LoginScreen> {
   //bool isLoading = false;
   final authFirebase = EmailAuthFirebase();
+  final authGoogle = GoogleAuthFirebase();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -43,7 +45,12 @@ class _nameState extends State<LoginScreen> {
       decoration: const InputDecoration(border: OutlineInputBorder()),
     );
     return Scaffold(
-        body: Container(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Map'),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: Container(
       height: MediaQuery.of(context).size.height -
           MediaQuery.of(context).padding.top,
       width: double.infinity,
@@ -163,12 +170,32 @@ class _nameState extends State<LoginScreen> {
                     setState(() {
                       isLoading = !isLoading;
                     });
-                    Future.delayed(const Duration(milliseconds: 5000), () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const DashboardScreen(),
-                          ));
+                    authGoogle.signUpUser()
+                        .then((value) {
+                      if (!value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Usuario NO VALIDADO.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        Navigator.pushNamed(context, "/dash");
+                      }
+                    }).catchError((error) {
+                      if (error is FirebaseAuthException) {
+                        print('Error de autenticación: ${error.code}');
+                        print(error.message);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(error.message ?? 'Error desconocido'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      } else {
+                        // Manejar otros tipos de errores
+                        print('Error desconocido: $error');
+                      }
                     });
                   }),
                   SignInButton(Buttons.Facebook, onPressed: () {
