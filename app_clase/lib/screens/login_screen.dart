@@ -45,11 +45,6 @@ class _nameState extends State<LoginScreen> {
       decoration: const InputDecoration(border: OutlineInputBorder()),
     );
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Map'),
-        backgroundColor: Colors.blueAccent,
-      ),
       body: Container(
       height: MediaQuery.of(context).size.height -
           MediaQuery.of(context).padding.top,

@@ -14,6 +14,9 @@ class MapSample extends StatefulWidget {
 }
 
 class MapSampleState extends State<MapSample> {
+  StreamSubscription<Position>? _positionStreamSubscription;
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
   LatLng? myPosition;
   Future<Position> determinePosition() async {
     LocationPermission permission;
@@ -35,14 +38,32 @@ class MapSampleState extends State<MapSample> {
     });
   }
 
-  @override
-  void initState() {
-    getCurrentLocation();
-    super.initState();
+  void _listenToLocationUpdates() {
+    _positionStreamSubscription = Geolocator.getPositionStream(
+            //desiredAccuracy: LocationAccuracy.high,
+            //distanceFilter: 10, // Actualiza la ubicación cada 10 metros
+            )
+        .listen((Position position) {
+      setState(() {
+        myPosition = LatLng(position.latitude, position.longitude);
+        print(myPosition);
+      });
+    });
   }
 
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  @override
+  void initState() {
+    super.initState();
+    getCurrentLocation();
+    getPolyPoints();
+    _listenToLocationUpdates();
+  }
+
+  @override
+  void dispose() {
+    _positionStreamSubscription?.cancel();
+    super.dispose();
+  }
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -77,74 +98,73 @@ class MapSampleState extends State<MapSample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: CircularMenu(
-      alignment: Alignment.center,
-      radius: 50,
-      startingAngleInRadian: 0,
-      endingAngleInRadian: 3.14,
-      items: [
-        CircularMenuItem(
-          onTap: () {},
-          icon: Icons.map,
-          color: Colors.green,
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Map'),
+          backgroundColor: Colors.blueAccent,
         ),
-        CircularMenuItem(
-          onTap: () {},
-          icon: Icons.access_time,
-          color: Colors.blue,
-        ),
-        CircularMenuItem(
-          onTap: () {},
-          icon: Icons.account_box,
-          color: Colors.grey,
-        ),
-        CircularMenuItem(
-          onTap: () {},
-          icon: Icons.agriculture_rounded,
-          color: Colors.red,
-        ),
-      ],
-      backgroundWidget: GoogleMap(
-        mapType: MapType.hybrid,
-        initialCameraPosition: CameraPosition(target: myPosition!, zoom: 14.5),
-        polylines: {
-          Polyline(
-            polylineId: PolylineId("route"),
-            points: polylineCoordinates,
-          ),
-        },
-        markers: {
-          Marker(
-            markerId: MarkerId("source"),
-            position: sourceLocation,
-          ),
-          Marker(
-            markerId: MarkerId("destination"),
-            position: destination,
-          ),
-          Marker(
-            position: myPosition!,
-            markerId: MarkerId("Position"),
-            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-          ),
-        },
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-      ),
-    ) /*GoogleMap(
-        mapType: MapType.hybrid,
-        initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-      ),*/
-        /*floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToTheLake,
-        label: const Text('To the lake!'),
-        icon: const Icon(Icons.directions_boat),
-      ),*/
-        );
+        body: myPosition == null
+            ? const Center(child: CircularProgressIndicator())
+            : CircularMenu(
+                alignment: Alignment.center,
+                radius: 50,
+                startingAngleInRadian: 0,
+                endingAngleInRadian: 3.14,
+                items: [
+                  CircularMenuItem(
+                    onTap: () {},
+                    icon: Icons.map,
+                    color: Colors.green,
+                  ),
+                  CircularMenuItem(
+                    onTap: () {},
+                    icon: Icons.access_time,
+                    color: Colors.blue,
+                  ),
+                  CircularMenuItem(
+                    onTap: () {},
+                    icon: Icons.account_box,
+                    color: Colors.grey,
+                  ),
+                  CircularMenuItem(
+                    onTap: () {},
+                    icon: Icons.agriculture_rounded,
+                    color: Colors.red,
+                  ),
+                ],
+                backgroundWidget: GoogleMap(
+                  mapType: MapType.hybrid,
+                  initialCameraPosition:
+                      CameraPosition(target: myPosition!, zoom: 14.5),
+                  markers: {
+                    Marker(
+                      markerId: MarkerId("source"),
+                      position: sourceLocation,
+                    ),
+                    Marker(
+                      markerId: MarkerId("destination"),
+                      position: destination,
+                    ),
+                    Marker(
+                      position: myPosition!,
+                      markerId: MarkerId("Position"),
+                      icon: BitmapDescriptor.defaultMarkerWithHue(
+                          BitmapDescriptor.hueAzure),
+                    ),
+                  },
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller.complete(controller);
+                  },
+                  polylines: {
+                    Polyline(
+                      polylineId: const PolylineId("route"),
+                      points: polylineCoordinates,
+                      color: const Color(0xFF7B61FF),
+                      width: 6,
+                    ),
+                  },
+                ),
+              ));
   }
 
   Future<void> _goToTheLake() async {
